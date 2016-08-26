@@ -1,6 +1,6 @@
 /**
  * Angular feedback directive similar to Google Feedback
- * @version v1.2.1 - 2016-08-04 * @link https://github.com/jacobscarter/angular-feedback
+ * @version v1.2.1 - 2016-08-26 * @link https://github.com/jacobscarter/angular-feedback
  * @author Jacob Carter <jacob@ieksolutions.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
@@ -14,7 +14,7 @@ angular.module("angularsendfeedback.html", []).run(["$templateCache", function($
 angular.module('angular-send-feedback', ['templates-angularsendfeedback']);
 
 angular.module('angular-send-feedback').directive('angularFeedback', [ function() {
-        
+
 
     return {
         restrict: 'EA',
@@ -53,6 +53,8 @@ angular.module('angular-send-feedback').directive('angularFeedback', [ function(
                             showDescriptionModal:   true,
                             isDraggable:            true,
                             onScreenshotTaken:      function(){},
+                            initDescriptionText:    '',
+                            sendFeedback:           angular.nop,
                             tpl: {
                                 initButton:     '<div id="feedback-button"></div><button class="feedback-btn feedback-btn-gray">Send feedback</button></div>',
                                 description:    '<div id="feedback-welcome"><div class="feedback-logo">Feedback</div><p>Feedback lets you send us suggestions about our products. We welcome problem reports, feature ideas and general comments.</p><p>Start by writing a brief description:</p><textarea id="feedback-note-tmp"></textarea><p>Next we\'ll let you identify areas of the page related to your description.</p><button id="feedback-welcome-next" class="feedback-next-btn feedback-btn-gray">Next</button><div id="feedback-welcome-error">Please enter a description.</div><div class="feedback-wizard-close"></div></div>',
@@ -500,7 +502,7 @@ angular.module('angular-send-feedback').directive('angularFeedback', [ function(
                                                 $('#feedback-overview').show();
                                                 $('#feedback-overview-description-text>textarea').remove();
                                                 $('#feedback-overview-screenshot>img').remove();
-                                                $('<textarea id="feedback-overview-note">' + $('#feedback-note').val() + '</textarea>').insertAfter('#feedback-overview-description-text h3:eq(0)');
+                                                $('<textarea id="feedback-overview-note">' + $('#feedback-note').val() + settings.initDescriptionText + '</textarea>').insertAfter('#feedback-overview-description-text h3:eq(0)');
                                                 $('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
                                             }
                                             else {
@@ -545,23 +547,31 @@ angular.module('angular-send-feedback').directive('angularFeedback', [ function(
                                         post.img = img;
                                         post.note = $('#feedback-note').val();
                                         var data = {feedback: post};
-                                        var jsonData = JSON.stringify(data);
-                                        $.ajax({
-                                            url: typeof settings.ajaxURL === 'function' ? settings.ajaxURL() : settings.ajaxURL,
-                                            dataType: 'json',
-                                            contentType: 'application/json',
-                                            type: 'POST',
-                                            data: jsonData,
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            success: function() {
+
+                                        settings.sentFeedback(data)
+                                            .then(function() {
                                                 $('#feedback-module').append(settings.tpl.submitSuccess);
-                                            },
-                                            error: function(){
+                                            })
+                                            .catch(function() {
                                                 $('#feedback-module').append(settings.tpl.submitError);
-                                            }
-                                        });
+                                            });
+                                        // var jsonData = JSON.stringify(data);
+                                        // $.ajax({
+                                        //     url: typeof settings.ajaxURL === 'function' ? settings.ajaxURL() : settings.ajaxURL,
+                                        //     dataType: 'json',
+                                        //     contentType: 'application/json',
+                                        //     type: 'POST',
+                                        //     data: jsonData,
+                                        //     headers: {
+                                        //         'Content-Type': 'application/json'
+                                        //     },
+                                        //     success: function() {
+                                        //         $('#feedback-module').append(settings.tpl.submitSuccess);
+                                        //     },
+                                        //     error: function(){
+                                        //         $('#feedback-module').append(settings.tpl.submitError);
+                                        //     }
+                                        // });
                                     }
                                     else {
                                         $('#feedback-overview-error').show();
@@ -642,10 +652,10 @@ angular.module('angular-send-feedback').directive('angularFeedback', [ function(
 
                 }(jQuery));
 
-            
+
             jQuery.feedback($scope.options);
 
-            
+
 
         }
     };

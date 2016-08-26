@@ -15,7 +15,6 @@
   height: auto;
   min-height: 90px;
   padding: 4px;
-  font-family: Arial, sans-serif;
   outline: none;
 }
 
@@ -173,7 +172,6 @@
 }
 
 .feedback-btn-gray {
-  font-family: 'Open sans';
   color: #444;
   text-align: center;
   cursor: pointer;
@@ -200,7 +198,6 @@
 }
 
 .feedback-btn-blue {
-  font-family: 'Open sans';
   color: #fff;
   text-align: center;
   cursor: pointer;
@@ -227,7 +224,6 @@
   z-index: 40000;
   width: 540px;
   padding: 30px 42px;
-  font-family: Arial, sans-serif;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.333);
   outline: 0;
@@ -359,7 +355,6 @@
   width: 314px;
   height: 90px;
   padding: 4px;
-  font-family: Arial, sans-serif;
   outline: none;
 }
 
